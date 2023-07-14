@@ -68,8 +68,8 @@ export const getProjectTasks = async (_, res) => {
     const task = await Task.findAll({
       where: { projectId: id }
     })
-    if (task) return res.status(200).json(task)
-    throw new Error('Project not found')
+    if (task.length > 0) return res.status(200).json(task)
+    throw new Error('Project not Found or Project doenst have Tasks')
   } catch (error) {
     res.status(404).json({ message: error.message })
   }

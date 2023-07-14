@@ -22,10 +22,10 @@ export const getTask = async (_, res) => {
 
 export const createTask = async (_, res) => {
   try {
-    const { name, done, projectId } = _.body
+    const { name, projectId, description } = _.body
     if (name && projectId) {
       await Task.create({
-        name, done, projectId
+        name, projectId, description
       })
       return res.status(201).json({ message: 'Task created' })
     }
@@ -59,5 +59,38 @@ export const deleteTask = async (_, res) => {
     throw new Error('Task Not Found')
   } catch (error) {
     res.status(404).json({ message: error.message })
+  }
+}
+
+export const startTask = async (_, res) => {
+  try {
+    const { id } = _.params
+    const task = await Task.update({ startDate: Date.now(), onProgress: true }, { where: { id } })
+    if (task) return res.status(200).json({ message: 'Task beggin' })
+    throw new Error('cannot update task, try again!')
+  } catch (error) {
+    res.status(500).json(error.message)
+  }
+}
+
+export const endTask = async (_, res) => {
+  try {
+    const { id } = _.params
+    const task = await Task.update({ endDate: Date.now(), onProgress: false, done: true }, { where: { id } })
+    if (task) return res.status(200).json({ message: 'Task done' })
+    throw new Error('cannot update task, try again!')
+  } catch (error) {
+    res.status(500).json(error.message)
+  }
+}
+
+export const reStartTask = async (_, res) => {
+  try {
+    const { id } = _.params
+    const task = await Task.update({ endDate: null, onProgress: true, done: false }, { where: { id } })
+    if (task) return res.status(200).json({ message: 'Task returned to work' })
+    throw new Error('cannot update task, try again!')
+  } catch (error) {
+    res.status(500).json(error.message)
   }
 }
