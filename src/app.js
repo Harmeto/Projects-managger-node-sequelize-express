@@ -5,6 +5,7 @@ import cors from 'cors'
 import corsOptions from './config/cors.js'
 import projectRoutes from './routes/projects.routes.js'
 import taskRoutes from './routes/task.routes.js'
+import userRoutes from './routes/users.routes.js'
 import credentials from './config/credentials.js'
 
 const app = express()
@@ -20,6 +21,7 @@ app.use(cors(corsOptions))
 
 app.use('/projects', projectRoutes)
 app.use('/task', taskRoutes)
+app.use('/user', userRoutes)
 
 app.all('*', (req, res) => {
   res.status(404).json({ message: 'Not Found' })
