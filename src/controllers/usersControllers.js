@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import { User } from '../models/User.js'
+import bcrypt from 'bcrypt'
 
 export const getUser = async (_, res) => {
   try {
@@ -14,8 +15,10 @@ export const createUser = async (_, res) => {
   try {
     const { username, mail, first_name, last_name, password, confirm_password } = _.body
     if (password === confirm_password) {
+      const hashedPassword = bcrypt.hashSync(password, 10)
+
       await User.create({
-        username, mail, first_name, last_name, password
+        username, mail, first_name, last_name, password: hashedPassword
       })
 
       return res.status(201).json({ message: 'User created' })

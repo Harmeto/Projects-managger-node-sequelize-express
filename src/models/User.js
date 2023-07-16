@@ -1,7 +1,6 @@
 import { sequelize } from '../database/database.js'
 import { isString } from '../utils/validators.js'
 import { DataTypes } from 'sequelize'
-import bcrypt from 'bcrypt'
 
 export const User = sequelize.define('user', {
   id: {
@@ -48,9 +47,6 @@ export const User = sequelize.define('user', {
     allowNull: false,
     validate: {
       notNull: true
-    },
-    set (value) {
-      this.setDataValue('password', bcrypt.hashSync(value, 10))
     }
   },
   full_name: {
