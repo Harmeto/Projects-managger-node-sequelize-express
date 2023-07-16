@@ -1,6 +1,7 @@
 import { sequelize } from '../database/database.js'
 import { isString } from '../utils/validators.js'
 import { DataTypes } from 'sequelize'
+import bcrypt from 'bcrypt'
 
 export const User = sequelize.define('user', {
   id: {
@@ -46,11 +47,21 @@ export const User = sequelize.define('user', {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-      notNull: true,
-      len: [6, 12]
+      notNull: true
+    },
+    set (value) {
+      this.setDataValue('password', bcrypt.hashSync(value, 10))
+    }
+  },
+  full_name: {
+    type: DataTypes.VIRTUAL,
+    get () {
+      return `${this.first_name} ${this.last_name}`
     }
   }
-}, {
+},
+{
   timestamps: true,
   paranoid: true
-})
+}
+)
