@@ -8,6 +8,10 @@ export const User = sequelize.define('user', {
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true
   },
+  rol: {
+    type: DataTypes.STRING,
+    defaultValue: 'user'
+  },
   username: {
     type: DataTypes.STRING,
     allowNull: false,

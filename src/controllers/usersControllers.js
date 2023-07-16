@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import { User } from '../models/User.js'
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 export const getUser = async (_, res) => {
   try {
@@ -30,6 +31,45 @@ export const createUser = async (_, res) => {
   }
 }
 
+export const loginUser = async (_, res) => {
+  const { mail, password } = _.body
+
+  if (!mail || !password) return res.status(422).json({ message: 'Invalid Fields' })
+
+  const user = await User.findOne({ where: { mail } })
+
+  if (!user) return res.status(401).json({ message: 'Email or password is incorrect' })
+
+  const match = bcrypt.compareSync(password, user.password)
+
+  if (!match) return res.status(401).json({ message: 'Email or password is incorrect' })
+
+  const accessToken = jwt.sign(
+    {
+      id: user.id
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: '1800s'
+    }
+  )
+
+  const refreshToken = jwt.sign(
+    {
+      id: user.id
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: '1d'
+    }
+  )
+
+  user.refresh_token = refreshToken
+  await user.save()
+
+  res.cookie('refresh_token', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 })
+  res.json({ access_token: accessToken })
+}
 // try {
 //   const { name, priority, description } = _.body
 
