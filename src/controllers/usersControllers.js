@@ -3,7 +3,7 @@ import { User } from '../models/User.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
-export const getUser = async (_, res) => {
+export const getUsers = async (_, res) => {
   try {
     const users = await User.findAll()
     res.status(200).json(users)
