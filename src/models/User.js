@@ -10,7 +10,14 @@ export const User = sequelize.define('user', {
   },
   rol: {
     type: DataTypes.STRING,
-    defaultValue: 'user'
+    allowNull: false,
+    defaultValue: 'user',
+    validate: {
+      isIn: {
+        args: [['user', 'admin']],
+        msg: 'El campo "rol" solo puede ser "user" o "admin"'
+      }
+    }
   },
   username: {
     type: DataTypes.STRING,
@@ -61,6 +68,14 @@ export const User = sequelize.define('user', {
   }
 },
 {
+  hooks: {
+    beforeCreate: async (user, options) => {
+      if (user.rol === 'admin') {
+        const adminCount = await User.count({ where: { rol: 'admin' } })
+        if (adminCount > 0) throw new Error('Solo puede haber un usuario tipo admin')
+      }
+    }
+  },
   timestamps: true,
   paranoid: true
 }

@@ -14,12 +14,12 @@ export const getUser = async (_, res) => {
 
 export const createUser = async (_, res) => {
   try {
-    const { username, mail, first_name, last_name, password, confirm_password } = _.body
+    const { username, mail, first_name, last_name, password, confirm_password, rol } = _.body
     if (password === confirm_password) {
       const hashedPassword = bcrypt.hashSync(password, 10)
 
       await User.create({
-        username, mail, first_name, last_name, password: hashedPassword
+        username, mail, first_name, last_name, password: hashedPassword, rol
       })
 
       return res.status(201).json({ message: 'User created' })
@@ -70,14 +70,14 @@ export const loginUser = async (_, res) => {
   res.cookie('refresh_token', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 })
   res.json({ access_token: accessToken })
 }
-// try {
-//   const { name, priority, description } = _.body
 
-//   await Project.create({
-//     name, description, priority
-//   })
+// TODO
 
-//   res.status(201).json({ message: `Project ${name} created` })
-// } catch (error) {
-//   res.status(500).json({ message: `ERROR: ${error.message}` })
-// }
+export const getOneUser = async (_, res) => {
+}
+
+export const logoutUser = async (_, res) => {
+}
+
+export const refreshToken = async (_, res) => {
+}
