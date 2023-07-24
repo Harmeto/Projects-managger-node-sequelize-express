@@ -60,6 +60,9 @@ export const User = sequelize.define('user', {
       notNull: true
     }
   },
+  refresh_token: {
+    type: DataTypes.STRING
+  },
   full_name: {
     type: DataTypes.VIRTUAL,
     get () {
